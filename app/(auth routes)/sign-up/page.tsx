@@ -41,16 +41,6 @@ export default function SignUpPage() {
       <h1 className={css.formTitle}>Sign up</h1>
       <form className={css.form} onSubmit={handleSubmit}>
         <div className={css.formGroup}>
-          <label htmlFor="username">Username</label>
-          <input
-            id="username"
-            type="text"
-            name="username"
-            className={css.input}
-            required
-          />
-        </div>
-        <div className={css.formGroup}>
           <label htmlFor="email">Email</label>
           <input
             id="email"
