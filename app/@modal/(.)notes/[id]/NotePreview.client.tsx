@@ -2,7 +2,7 @@
 
 import Modal from "@/components/Modal/Modal";
 import { useRouter } from "next/navigation";
-import NoteDetailsClient from "@/app/notes/[id]/NoteDetails.client";
+import NoteDetailsClient from "@/app/(private routes)/notes/[id]/NoteDetails.client";
 import css from "./NotePreview.client.module.css";
 
 export default function NotePreview({ id }: { id: string }) {
