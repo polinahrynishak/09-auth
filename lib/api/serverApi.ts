@@ -30,8 +30,13 @@ export const fetchNoteById = async (id: string): Promise<Note> => {
   return response.data;
 };
 
-export const fetchNotes = async (params?: object): Promise<Note[]> => {
+export const fetchNotes = async (
+  params?: object,
+): Promise<{ notes: Note[]; totalPages: number }> => {
   const api = await getServerApi();
-  const response = await api.get<Note[]>("/notes", { params });
+  const response = await api.get<{ notes: Note[]; totalPages: number }>(
+    "/notes",
+    { params },
+  );
   return response.data;
 };

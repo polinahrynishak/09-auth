@@ -30,8 +30,10 @@ export const logout = async () => {
   await api.post("/auth/logout");
 };
 
-export const fetchNotes = async (params?: object): Promise<Note[]> => {
-  const response = await api.get<Note[]>("/notes", { params });
+export const fetchNotes = async (
+  params?: object,
+): Promise<{ notes: Note[]; totalPages: number }> => {
+  const response = await api.get("/notes", { params });
   return response.data;
 };
 

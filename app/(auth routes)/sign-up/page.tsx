@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthCredentials } from "@/lib/api/clientApi";
+import { RegisterCredentials } from "@/types/user";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -16,9 +16,9 @@ export default function SignUpPage() {
 
   const mutation = useMutation({
     mutationFn: register,
-    onSuccess: (user) => {
-      setUser(user);
-      router.push("/profile");
+    onSuccess: (data) => {
+      setUser(data.user);
+      router.push("/notes/filter/all");
     },
     onError: (err: AxiosError<{ message: string }>) => {
       setError(err.response?.data?.message || "Action failed");
@@ -31,7 +31,7 @@ export default function SignUpPage() {
 
     const data = Object.fromEntries(
       formData.entries(),
-    ) as unknown as AuthCredentials;
+    ) as unknown as RegisterCredentials;
 
     mutation.mutate(data);
   };
