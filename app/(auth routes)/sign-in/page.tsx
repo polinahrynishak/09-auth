@@ -18,7 +18,8 @@ export default function SignInPage() {
     mutationFn: login,
     onSuccess: (data) => {
       setUser(data.user);
-      router.push("/notes/filter/all");
+      router.refresh();
+      router.push("/profile");
     },
     onError: (err: AxiosError<{ message: string }>) => {
       setError(err.response?.data?.message || "Action failed");

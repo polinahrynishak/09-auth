@@ -2,6 +2,13 @@ import { api } from "./api";
 import { User, LoginCredentials, RegisterCredentials } from "@/types/user";
 import { Note, NewNote } from "@/types/note";
 
+interface FetchNotesParams {
+  search?: string;
+  page?: number;
+  tag?: string;
+  perPage?: number;
+}
+
 export const checkSession = async (): Promise<User | null> => {
   try {
     const response = await api.get<User>("/auth/session");
@@ -31,7 +38,7 @@ export const logout = async () => {
 };
 
 export const fetchNotes = async (
-  params?: object,
+  params?: FetchNotesParams,
 ): Promise<{ notes: Note[]; totalPages: number }> => {
   const response = await api.get("/notes", { params });
   return response.data;
@@ -44,11 +51,6 @@ export const fetchNoteById = async (id: string): Promise<Note> => {
 
 export const createNote = async (data: NewNote) => {
   const response = await api.post<Note>("/notes", data);
-  return response.data;
-};
-
-export const updateNote = async (id: string, data: Partial<NewNote>) => {
-  const response = await api.patch<Note>(`/notes/${id}`, data);
   return response.data;
 };
 

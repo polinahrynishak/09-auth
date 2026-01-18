@@ -18,7 +18,7 @@ export default function SignUpPage() {
     mutationFn: register,
     onSuccess: (data) => {
       setUser(data.user);
-      router.push("/notes/filter/all");
+      router.push("/profile");
     },
     onError: (err: AxiosError<{ message: string }>) => {
       setError(err.response?.data?.message || "Action failed");

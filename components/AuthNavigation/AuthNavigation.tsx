@@ -7,29 +7,26 @@ import { logout as apiLogout } from "@/lib/api/clientApi";
 import css from "./AuthNavigation.module.css";
 
 export const AuthNavigation = () => {
+  const { user, isAuthenticated, clearIsAuthenticated } = useAuthStore();
   const router = useRouter();
-  const { isAuthenticated, user, clearIsAuthenticated } = useAuthStore();
 
   const handleLogout = async () => {
+    clearIsAuthenticated();
     try {
       await apiLogout();
-      clearIsAuthenticated();
-      router.push("/sign-in");
     } catch (error) {
-      console.error("Logout failed", error);
+      console.error("Logout error:", error);
     }
+    router.refresh();
+    router.push("/sign-in");
   };
 
   return (
     <>
-      {isAuthenticated ? (
+      {isAuthenticated && user ? (
         <>
           <li className={css.navigationItem}>
-            <Link
-              href="/profile"
-              prefetch={false}
-              className={css.navigationLink}
-            >
+            <Link href="/profile" className={css.navigationLink}>
               Profile
             </Link>
           </li>
@@ -43,20 +40,12 @@ export const AuthNavigation = () => {
       ) : (
         <>
           <li className={css.navigationItem}>
-            <Link
-              href="/sign-in"
-              prefetch={false}
-              className={css.navigationLink}
-            >
+            <Link href="/sign-in" className={css.navigationLink}>
               Login
             </Link>
           </li>
           <li className={css.navigationItem}>
-            <Link
-              href="/sign-up"
-              prefetch={false}
-              className={css.navigationLink}
-            >
+            <Link href="/sign-up" className={css.navigationLink}>
               Sign up
             </Link>
           </li>

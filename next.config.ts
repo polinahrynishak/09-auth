@@ -9,7 +9,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  /* config options here */
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "https://09-auth-55mg.vercel.app/api/:path*",
+      },
+    ];
+  },
   reactCompiler: true,
 };
 

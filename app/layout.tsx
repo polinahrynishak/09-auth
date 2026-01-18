@@ -4,6 +4,8 @@ import "./globals.css";
 import { TanStackProvider } from "@/components/TanStackProvider/TanStackProvider";
 import Header from "@/components/Header/Header";
 import { Footer } from "@/components/Footer/Footer";
+import { checkSessionServer } from "@/lib/api/serverApi";
+import { AuthProvider } from "@/components/AuthProvider/AuthProvider";
 
 const roboto = Roboto({
   weight: ["400", "500", "700"],
@@ -31,25 +33,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-  modal,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-  modal: React.ReactNode;
-}>) {
+}) {
+  const user = await checkSessionServer();
+
   return (
-    <html lang="en">
-      <body
-        suppressHydrationWarning
-        className={`${roboto.variable} ${roboto.variable}`}
-      >
+    <html lang="en" className={roboto.variable}>
+      <body className="antialiased" suppressHydrationWarning>
         <TanStackProvider>
-          <Header />
-          <main>
-            {children} {modal}
-          </main>
-          <Footer />
+          <AuthProvider initialUser={user}>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </AuthProvider>
         </TanStackProvider>
       </body>
     </html>
