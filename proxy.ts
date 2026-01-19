@@ -20,10 +20,12 @@ export async function proxy(request: NextRequest) {
       const refreshResponse = await refreshSessionServer();
       const response = NextResponse.next();
 
-      const setCookieHeader = refreshResponse.headers.get("set-cookie");
+      const setCookieHeaders = refreshResponse.headers["set-cookie"];
 
-      if (setCookieHeader) {
-        response.headers.set("set-cookie", setCookieHeader);
+      if (setCookieHeaders && Array.isArray(setCookieHeaders)) {
+        setCookieHeaders.forEach((cookie) => {
+          response.headers.append("set-cookie", cookie);
+        });
       }
 
       return response;

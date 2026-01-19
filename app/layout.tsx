@@ -6,6 +6,7 @@ import Header from "@/components/Header/Header";
 import { Footer } from "@/components/Footer/Footer";
 import { checkSessionServer } from "@/lib/api/serverApi";
 import { AuthProvider } from "@/components/AuthProvider/AuthProvider";
+import React from "react";
 
 const roboto = Roboto({
   weight: ["400", "500", "700"],
@@ -35,11 +36,19 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
-  const user = await checkSessionServer();
+  let user = null;
 
+  try {
+    const response = await checkSessionServer();
+    user = response?.data || null;
+  } catch (error) {
+    user = null;
+  }
   return (
     <html lang="en" className={roboto.variable}>
       <body className="antialiased" suppressHydrationWarning>
@@ -47,6 +56,7 @@ export default async function RootLayout({
           <AuthProvider initialUser={user}>
             <Header />
             <main>{children}</main>
+            {modal}
             <Footer />
           </AuthProvider>
         </TanStackProvider>

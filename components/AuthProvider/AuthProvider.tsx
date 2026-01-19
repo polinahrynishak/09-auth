@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
 import { User } from "@/types/user";
-import { checkSession } from "@/lib/api/clientApi";
+import { checkSession, getUser } from "@/lib/api/clientApi";
 import Loader from "@/components/Status/Loader";
 
 export const AuthProvider = ({
@@ -17,6 +17,12 @@ export const AuthProvider = ({
   const [isLoading, setIsLoading] = useState(!initialUser);
 
   useEffect(() => {
+    if (initialUser === null) {
+      clearIsAuthenticated();
+      setIsLoading(false);
+      return;
+    }
+
     if (initialUser) {
       setUser(initialUser);
       setIsLoading(false);
@@ -25,7 +31,9 @@ export const AuthProvider = ({
 
     const initAuth = async () => {
       try {
-        const user = await checkSession();
+        await checkSession();
+        const user = await getUser();
+
         if (user) {
           setUser(user);
         } else {

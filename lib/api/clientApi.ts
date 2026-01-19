@@ -9,13 +9,13 @@ interface FetchNotesParams {
   perPage?: number;
 }
 
-export const checkSession = async (): Promise<User | null> => {
-  try {
-    const response = await api.get<User>("/auth/session");
-    return response.data;
-  } catch {
-    return null;
-  }
+export const checkSession = async (): Promise<void> => {
+  await api.get("/auth/session");
+};
+
+export const getUser = async (): Promise<User> => {
+  const response = await api.get<User>("/users/me");
+  return response.data;
 };
 
 export const updateMe = async (data: { username: string }): Promise<User> => {
