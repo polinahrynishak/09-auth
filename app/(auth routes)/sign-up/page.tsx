@@ -17,7 +17,7 @@ export default function SignUpPage() {
   const mutation = useMutation({
     mutationFn: register,
     onSuccess: (data) => {
-      setUser(data.user);
+      setUser(data);
       router.push("/profile");
     },
     onError: (err: AxiosError<{ message: string }>) => {
