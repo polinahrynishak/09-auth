@@ -21,6 +21,9 @@ export const AuthNavigation = () => {
     router.push("/sign-in");
   };
 
+  console.log("isAuth", isAuthenticated);
+  console.log("user", user);
+
   return (
     <>
       {isAuthenticated && user ? (

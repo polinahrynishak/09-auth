@@ -2,33 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
-import { User } from "@/types/user";
 import { checkSession, getUser } from "@/lib/api/clientApi";
 import Loader from "@/components/Status/Loader";
 
-export const AuthProvider = ({
-  children,
-  initialUser,
-}: {
-  children: React.ReactNode;
-  initialUser: User | null;
-}) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { setUser, clearIsAuthenticated } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(!initialUser);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (initialUser === null) {
-      clearIsAuthenticated();
-      setIsLoading(false);
-      return;
-    }
-
-    if (initialUser) {
-      setUser(initialUser);
-      setIsLoading(false);
-      return;
-    }
-
     const initAuth = async () => {
       try {
         await checkSession();
@@ -48,9 +29,9 @@ export const AuthProvider = ({
     };
 
     initAuth();
-  }, [initialUser, setUser, clearIsAuthenticated]);
+  }, [setUser, clearIsAuthenticated]);
 
-  if (isLoading && !initialUser) {
+  if (isLoading) {
     return <Loader />;
   }
 

@@ -17,7 +17,8 @@ export default function SignInPage() {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      setUser(data.user);
+      console.log("data", data);
+      setUser(data);
       router.refresh();
       router.push("/profile");
     },

@@ -24,12 +24,12 @@ export const updateMe = async (data: { username: string }): Promise<User> => {
 };
 
 export const login = async (data: LoginCredentials) => {
-  const response = await api.post<{ user: User }>("/auth/login", data);
+  const response = await api.post<User>("/auth/login", data);
   return response.data;
 };
 
 export const register = async (data: RegisterCredentials) => {
-  const response = await api.post<{ user: User }>("/auth/register", data);
+  const response = await api.post<User>("/auth/register", data);
   return response.data;
 };
 
