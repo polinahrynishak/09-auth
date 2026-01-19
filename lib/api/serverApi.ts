@@ -34,6 +34,7 @@ export const fetchNoteById = async (id: string): Promise<Note> => {
   const response = await api.get<Note>(`/notes/${id}`, {
     headers: { Cookie: cookieStore.toString() },
   });
+  console.log("response data", response.data);
   return response.data;
 };
 

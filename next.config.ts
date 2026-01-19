@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://09-auth-55mg.vercel.app/api/:path*",
+        destination: "https://notehub-api.goit.study/api/:path*",
       },
     ];
   },

@@ -24,6 +24,7 @@ export default function NoteDetailsClient({ id }: NoteDetailsClientProps) {
   }
 
   if (error || !note) {
+    console.log("error", error);
     return <p>Something went wrong.</p>;
   }
 

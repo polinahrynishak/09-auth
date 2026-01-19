@@ -45,7 +45,9 @@ export const fetchNotes = async (
 };
 
 export const fetchNoteById = async (id: string): Promise<Note> => {
+  console.log("here");
   const response = await api.get<Note>(`/notes/${id}`);
+  console.log("responsedata", response.data);
   return response.data;
 };
 
