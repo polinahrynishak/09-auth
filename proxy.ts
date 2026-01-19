@@ -1,49 +1,90 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
-import { refreshSessionServer } from "./lib/api/serverApi";
+import { checkSessionServer } from "./lib/api/serverApi";
+import { parse } from "cookie";
+
+const privateRoutes = ["/notes", "/profile"];
+const publicRoutes = ["/sign-in", "/sign-up"];
 
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.includes(".") ||
+    pathname === "/favicon.ico"
+  ) {
+    return NextResponse.next();
+  }
+
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
   const refreshToken = cookieStore.get("refreshToken")?.value;
 
-  const { pathname } = request.nextUrl;
+  const isPublicRoute = publicRoutes.some((route) =>
+    pathname.startsWith(route),
+  );
+  const isPrivateRoute = privateRoutes.some((route) =>
+    pathname.startsWith(route),
+  );
 
-  const isPrivatePage =
-    pathname.startsWith("/notes") || pathname.startsWith("/profile");
-  const isAuthPage =
-    pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up");
+  if (!accessToken) {
+    if (refreshToken) {
+      const data = await checkSessionServer();
+      const setCookie = data.headers["set-cookie"];
 
-  if (!accessToken && refreshToken && isPrivatePage) {
-    try {
-      const refreshResponse = await refreshSessionServer();
-      const response = NextResponse.next();
+      if (setCookie) {
+        const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
+        for (const cookieStr of cookieArray) {
+          const parsed = parse(cookieStr);
+          const options = {
+            expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
+            path: parsed.Path,
+            maxAge: Number(parsed["Max-Age"]),
+          };
+          if (parsed.accessToken)
+            cookieStore.set("accessToken", parsed.accessToken, options);
+          if (parsed.refreshToken)
+            cookieStore.set("refreshToken", parsed.refreshToken, options);
+        }
 
-      const setCookieHeaders = refreshResponse.headers["set-cookie"];
+        if (isPublicRoute) {
+          return NextResponse.redirect(new URL("/", request.url), {
+            headers: {
+              Cookie: cookieStore.toString(),
+            },
+          });
+        }
 
-      if (setCookieHeaders && Array.isArray(setCookieHeaders)) {
-        setCookieHeaders.forEach((cookie) => {
-          response.headers.append("set-cookie", cookie);
-        });
+        if (isPrivateRoute) {
+          return NextResponse.next({
+            headers: {
+              Cookie: cookieStore.toString(),
+            },
+          });
+        }
       }
+    }
 
-      return response;
-    } catch (error) {
-      const response = NextResponse.redirect(new URL("/sign-in", request.url));
-      response.cookies.delete("accessToken");
-      response.cookies.delete("refreshToken");
-      return response;
+    if (isPublicRoute) {
+      return NextResponse.next();
+    }
+
+    if (isPrivateRoute) {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
     }
   }
 
-  if (!accessToken && isPrivatePage) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
+  if (isPublicRoute) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (accessToken && isAuthPage) {
-    return NextResponse.redirect(new URL("/notes/filter/all", request.url));
+  if (isPrivateRoute) {
+    return NextResponse.next();
   }
-
-  return NextResponse.next();
 }
+
+export const config = {
+  matcher: ["/notes/:path*", "/profile/:path*", "/sign-in", "/sign-up"],
+};

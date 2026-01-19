@@ -11,15 +11,10 @@ interface FetchNotesParams {
   perPage?: number;
 }
 
-const getServerApi = async () => {
-  return api;
-};
-
 export const checkSessionServer = async (): Promise<AxiosResponse<User>> => {
   const cookieStore = await cookies();
-  const serverApi = await getServerApi();
 
-  const response = await serverApi.get<User>("/auth/session", {
+  const response = await api.get<User>("/auth/session", {
     headers: { Cookie: cookieStore.toString() },
   });
 
@@ -28,8 +23,7 @@ export const checkSessionServer = async (): Promise<AxiosResponse<User>> => {
 
 export const getMeServer = async (): Promise<User> => {
   const cookieStore = await cookies();
-  const serverApi = await getServerApi();
-  const response = await serverApi.get<User>("/users/me", {
+  const response = await api.get<User>("/users/me", {
     headers: { Cookie: cookieStore.toString() },
   });
   return response.data;
@@ -37,8 +31,7 @@ export const getMeServer = async (): Promise<User> => {
 
 export const fetchNoteById = async (id: string): Promise<Note> => {
   const cookieStore = await cookies();
-  const serverApi = await getServerApi();
-  const response = await serverApi.get<Note>(`/notes/${id}`, {
+  const response = await api.get<Note>(`/notes/${id}`, {
     headers: { Cookie: cookieStore.toString() },
   });
   return response.data;
@@ -48,8 +41,7 @@ export const fetchNotes = async (
   params?: FetchNotesParams,
 ): Promise<{ notes: Note[]; totalPages: number }> => {
   const cookieStore = await cookies();
-  const serverApi = await getServerApi();
-  const response = await serverApi.get<{ notes: Note[]; totalPages: number }>(
+  const response = await api.get<{ notes: Note[]; totalPages: number }>(
     "/notes",
     {
       params,
@@ -57,17 +49,4 @@ export const fetchNotes = async (
     },
   );
   return response.data;
-};
-
-export const refreshSessionServer = async (): Promise<AxiosResponse<User>> => {
-  const cookieStore = await cookies();
-  const serverApi = await getServerApi();
-
-  const response = await serverApi.get<User>("/auth/session", {
-    headers: {
-      Cookie: cookieStore.toString(),
-    },
-  });
-
-  return response;
 };
